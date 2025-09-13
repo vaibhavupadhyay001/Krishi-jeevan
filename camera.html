@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Image</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background:rgb(51, 154, 97);
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .upload-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      gap: 30px;
+    }
+
+    .upload-options {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .upload-card {
+      width: 220px;
+      height: 220px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .upload-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+    }
+
+    .upload-card img {
+      width: 60px;
+      margin-bottom: 15px;
+    }
+
+    .upload-card p {
+      font-size: 16px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .steps-section {
+      background: #fff;
+      width: 90%;
+      max-width: 700px;
+      padding: 20px 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    .steps-section h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      color:rgb(53, 160, 101);
+    }
+
+    .steps-section ol {
+      font-size: 16px;
+      color: #444;
+      line-height: 1.8;
+    }
+
+    .steps-section ol li {
+      margin-bottom: 12px;
+    }
+
+    .steps-section .hindi {
+      font-size: 15px;
+      color: #555;
+      margin-top: 3px;
+    }
+
+    video {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 600px) {
+      .upload-options {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .upload-card {
+        width: 80%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>Select or Capture Image / छवि चुनें या क्लिक करें</header>
+
+  <section class="upload-section">
+
+    <div class="upload-options">
+      <div class="upload-card" id="clickPhoto">
+        <img src="https://img.icons8.com/ios-filled/100/000000/camera.png" alt="Click Image">
+        <p>Click Image to Upload<br>फोटो क्लिक करके अपलोड करें</p>
+      </div>
+
+      <div class="upload-card" id="uploadGallery">
+        <img src="https://img.icons8.com/ios-filled/100/000000/picture.png" alt="Upload from Gallery">
+        <p>Upload from Gallery<br>गैलरी से अपलोड करें</p>
+        <input type="file" id="galleryInput" accept="image/*" style="display:none;">
+      </div>
+    </div>
+
+    <!-- Video preview for camera -->
+    <video id="cameraPreview" autoplay playsinline style="display:none;"></video>
+
+    <div class="steps-section">
+      <h3>Steps to Upload / अपलोड करने के स्टेप्स</h3>
+      <ol>
+        <li>Click on "Click Image to Upload" to take a photo using your camera. <span class="hindi">कॅमरा से फोटो लेने के लिए "Click Image to Upload" पर क्लिक करें।</span></li>
+        <li>Click on "Upload from Gallery" to select an existing photo from your device. <span class="hindi">अपने डिवाइस से पहले से मौजूद फोटो चुनने के लिए "Upload from Gallery" पर क्लिक करें।</span></li>
+        <li>Ensure the photo is clear and focused for accurate results. <span class="hindi">सुनिश्चित करें कि फोटो स्पष्ट और फोकस में हो।</span></li>
+        <li>Once selected, the image will be uploaded automatically. <span class="hindi">एक बार चुनने के बाद, फोटो अपने आप अपलोड हो जाएगी।</span></li>
+        <li>You can then proceed to the next steps for analysis. <span class="hindi">इसके बाद आप अगले स्टेप्स के लिए आगे बढ़ सकते हैं।</span></li>
+      </ol>
+    </div>
+
+  </section>
+
+  <script>
+    const clickPhotoBtn = document.getElementById('clickPhoto');
+    const galleryBtn = document.getElementById('uploadGallery');
+    const galleryInput = document.getElementById('galleryInput');
+    const cameraPreview = document.getElementById('cameraPreview');
+
+    // Click Image: Access camera
+    clickPhotoBtn.addEventListener('click', async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        cameraPreview.srcObject = stream;
+        cameraPreview.style.display = 'block';
+      } catch (err) {
+        alert('Camera access denied or not available! / कैमरा एक्सेस अस्वीकृत या उपलब्ध नहीं है।');
+      }
+    });
+
+    // Upload from Gallery
+    galleryBtn.addEventListener('click', () => {
+      galleryInput.click();
+    });
+
+    galleryInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        alert(`Selected file: ${file.name} / चयनित फ़ाइल: ${file.name}`);
+      }
+    });
+  </script>
+
+</body>
+</html>
